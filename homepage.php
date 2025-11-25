@@ -37,6 +37,12 @@ if (!$user) {
     header("Location: signin.php");
     exit();
 }
+
+// Get profile picture
+$profile_picture = !empty($user['profile_picture']) ? $user['profile_picture'] : null;
+
+$stmt->close();
+$conn->close();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -691,6 +697,31 @@ if (!$user) {
         right: -140px;
       }
     }
+    .header-profile-pic {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #16a34a;
+  margin-right: 0.2rem;
+}
+
+.header-profile-placeholder {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #dcfce7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 0.5rem;
+  border: 2px solid #16a34a;
+}
+
+.header-profile-placeholder i {
+  color: #16a34a;
+  font-size: 1.25rem;
+}
   </style>
 </head>
 <body>
@@ -698,6 +729,15 @@ if (!$user) {
   <header>
     <div class="header-container">
       <div class="header-left">
+        <?php if ($profile_picture && file_exists($profile_picture)): ?>
+          <img src="<?php echo htmlspecialchars($profile_picture); ?>" 
+               alt="Profile" 
+               class="header-profile-pic">
+        <?php else: ?>
+          <div class="header-profile-placeholder">
+            <i class="fas fa-user"></i>
+          </div>
+        <?php endif; ?>
         <p>Welcome <?php echo htmlspecialchars($user['first_name']); ?>!</p>
         <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRTDCuh4kIpAtR-QmjA1kTjE_8-HSd8LSt3Gw&s" alt="Barangay Logo">
         <div class="title">
@@ -765,7 +805,7 @@ if (!$user) {
           <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRTDCuh4kIpAtR-QmjA1kTjE_8-HSd8LSt3Gw&s" alt="eBCsH Logo">
         </div>
         <h1>Welcome to BCDRS</h1>
-        <p>Submit health-related requests to your barangay and track their progress in real time. Our system ensures transparency and efficient processing of your requests.</p>
+        <p>Submit document-related requests to your barangay and track their progress in real time. Our system ensures transparency and efficient processing of your requests.</p>
       </section>
 
       <!-- Action Cards -->
