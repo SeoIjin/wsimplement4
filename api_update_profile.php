@@ -109,5 +109,43 @@ if (isset($_FILES['profile_picture'])) {
     }
 }
 
+// Handle Change Password
+if (isset($_POST['change_password'])) {
+    $current_password = $_POST['current_password'];
+    $new_password = $_POST['new_password'];
+    
+    // Validate new password length
+    if (strlen($new_password) < 6) {
+        echo json_encode(['success' => false, 'error' => 'New password must be at least 6 characters long']);
+        exit();
+    }
+    
+    // Get current password from database
+    $stmt = $conn->prepare("SELECT password FROM account WHERE id = ?");
+    $stmt->bind_param("i", $user_id);
+    $stmt->execute();
+    $stmt->bind_result($stored_password);
+    $stmt->fetch();
+    $stmt->close();
+    
+    // Verify current password (plain text comparison)
+    if ($current_password !== $stored_password) {
+        echo json_encode(['success' => false, 'error' => 'Current password is incorrect']);
+        exit();
+    }
+    
+    // Update password (store as plain text)
+    $stmt = $conn->prepare("UPDATE account SET password = ? WHERE id = ?");
+    $stmt->bind_param("si", $new_password, $user_id);
+    
+    if ($stmt->execute()) {
+        echo json_encode(['success' => true, 'message' => 'Password updated successfully']);
+    } else {
+        echo json_encode(['success' => false, 'error' => 'Failed to update password']);
+    }
+    
+    $stmt->close();
+}
+
 $conn->close();
 ?>
