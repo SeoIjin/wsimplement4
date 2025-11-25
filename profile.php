@@ -660,6 +660,142 @@ $conn->close();
         align-items: center;
         gap: 0; /* Remove gap since we're using margin-right on back-btn */
     }
+    /* Change Password Section */
+.change-password-section {
+    margin-top: 1.5rem;
+    background: #f0f9ff;
+    border-left: 4px solid #3b82f6;
+    padding: 1.25rem;
+    border-radius: 0 0.5rem 0.5rem 0;
+}
+
+.change-password-section h3 {
+    color: #1e40af;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.password-form {
+    display: grid;
+    gap: 1rem;
+}
+
+.password-input-group {
+    position: relative;
+}
+
+.password-input-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #1e40af;
+    font-weight: 500;
+    font-size: 0.875rem;
+}
+
+.password-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.password-input {
+    width: 100%;
+    padding: 10px 40px 10px 12px;
+    border: 1px solid #bfdbfe;
+    border-radius: 6px;
+    font-size: 0.9375rem;
+    background: white;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+.password-input:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.password-toggle {
+    position: absolute;
+    right: 12px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: #6b7280;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.password-toggle:hover {
+    color: #3b82f6;
+}
+
+.password-actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+}
+
+.change-password-btn {
+    background: #3b82f6;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: background 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.change-password-btn:hover {
+    background: #2563eb;
+}
+
+.cancel-password-btn {
+    background: #6b7280;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: background 0.3s;
+}
+
+.cancel-password-btn:hover {
+    background: #4b5563;
+}
+
+.toggle-password-form-btn {
+    background: #3b82f6;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.875rem;
+    transition: background 0.3s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.toggle-password-form-btn:hover {
+    background: #2563eb;
+}
+
+#passwordFormContainer {
+    margin-top: 1rem;
+}
     </style>
 </head>
 <body>
@@ -831,6 +967,83 @@ $conn->close();
                         <span class="status-text">Active and in good standing</span>
                     </div>
                 </div>
+
+                <!-- Change Password Section -->
+<div class="change-password-section">
+    <h3>
+        <i class="fas fa-lock"></i>
+        Change Password
+    </h3>
+    <button type="button" class="toggle-password-form-btn" onclick="togglePasswordForm()">
+        <i class="fas fa-key"></i>
+        <span id="togglePasswordText">Change Password</span>
+    </button>
+    
+    <div id="passwordFormContainer" style="display: none;">
+        <form class="password-form" onsubmit="changePassword(event)">
+            <div class="password-input-group">
+                <label for="currentPassword">Current Password</label>
+                <div class="password-input-wrapper">
+                    <input 
+                        type="password" 
+                        id="currentPassword" 
+                        class="password-input" 
+                        placeholder="Enter current password"
+                        required
+                    >
+                    <button type="button" class="password-toggle" onclick="togglePasswordVisibility('currentPassword', this)">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="password-input-group">
+                <label for="newPassword">New Password</label>
+                <div class="password-input-wrapper">
+                    <input 
+                        type="password" 
+                        id="newPassword" 
+                        class="password-input" 
+                        placeholder="Enter new password (min. 6 characters)"
+                        required
+                    >
+                    <button type="button" class="password-toggle" onclick="togglePasswordVisibility('newPassword', this)">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="password-input-group">
+                <label for="confirmNewPassword">Confirm New Password</label>
+                <div class="password-input-wrapper">
+                    <input 
+                        type="password" 
+                        id="confirmNewPassword" 
+                        class="password-input" 
+                        placeholder="Confirm new password"
+                        required
+                    >
+                    <button type="button" class="password-toggle" onclick="togglePasswordVisibility('confirmNewPassword', this)">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div id="passwordMessage"></div>
+
+            <div class="password-actions">
+                <button type="submit" class="change-password-btn">
+                    <i class="fas fa-check"></i>
+                    Update Password
+                </button>
+                <button type="button" class="cancel-password-btn" onclick="togglePasswordForm()">
+                    <i class="fas fa-times"></i>
+                    Cancel
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
 
                 <!-- Additional Info for Admin -->
                 <?php if ($is_admin): ?>
@@ -1064,6 +1277,99 @@ async function uploadProfilePicture(input) {
     
     // Clear the input
     input.value = '';
+}
+
+// Toggle Password Form
+function togglePasswordForm() {
+    const container = document.getElementById('passwordFormContainer');
+    const toggleText = document.getElementById('togglePasswordText');
+    const toggleBtn = document.querySelector('.toggle-password-form-btn');
+    
+    if (container.style.display === 'none') {
+        container.style.display = 'block';
+        toggleText.textContent = 'Hide Form';
+        toggleBtn.querySelector('i').className = 'fas fa-eye-slash';
+    } else {
+        container.style.display = 'none';
+        toggleText.textContent = 'Change Password';
+        toggleBtn.querySelector('i').className = 'fas fa-key';
+        // Clear form
+        document.getElementById('currentPassword').value = '';
+        document.getElementById('newPassword').value = '';
+        document.getElementById('confirmNewPassword').value = '';
+        document.getElementById('passwordMessage').innerHTML = '';
+    }
+}
+
+// Toggle Password Visibility
+function togglePasswordVisibility(inputId, button) {
+    const input = document.getElementById(inputId);
+    const icon = button.querySelector('i');
+    
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.className = 'fas fa-eye-slash';
+    } else {
+        input.type = 'password';
+        icon.className = 'fas fa-eye';
+    }
+}
+
+// Change Password
+async function changePassword(event) {
+    event.preventDefault();
+    
+    const currentPassword = document.getElementById('currentPassword').value;
+    const newPassword = document.getElementById('newPassword').value;
+    const confirmNewPassword = document.getElementById('confirmNewPassword').value;
+    
+    // Validation
+    if (newPassword.length < 6) {
+        showMessage('passwordMessage', 'New password must be at least 6 characters long', 'error');
+        return;
+    }
+    
+    if (newPassword !== confirmNewPassword) {
+        showMessage('passwordMessage', 'New passwords do not match', 'error');
+        return;
+    }
+    
+    if (currentPassword === newPassword) {
+        showMessage('passwordMessage', 'New password must be different from current password', 'error');
+        return;
+    }
+    
+    const formData = new FormData();
+    formData.append('change_password', '1');
+    formData.append('current_password', currentPassword);
+    formData.append('new_password', newPassword);
+    
+    try {
+        showMessage('passwordMessage', 'Updating password...', 'success');
+        
+        const response = await fetch('api_update_profile.php', {
+            method: 'POST',
+            body: formData
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            showMessage('passwordMessage', result.message, 'success');
+            
+            // Clear form after 2 seconds
+            setTimeout(() => {
+                document.getElementById('currentPassword').value = '';
+                document.getElementById('newPassword').value = '';
+                document.getElementById('confirmNewPassword').value = '';
+                togglePasswordForm();
+            }, 2000);
+        } else {
+            showMessage('passwordMessage', result.error, 'error');
+        }
+    } catch (error) {
+        showMessage('passwordMessage', 'An error occurred. Please try again.', 'error');
+    }
 }
 
 // Helper function to show messages
