@@ -780,6 +780,29 @@ $conn->close();
                 font-size: 1.25rem;
             }
         }
+        .modal-eye-toggle {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    opacity: 0.6;
+    background: transparent;
+    border: 0;
+    padding: 0;
+}
+
+.modal-eye-toggle img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.modal-eye-toggle:hover {
+    opacity: 0.9;
+}
     </style>
 </head>
 <body>
@@ -829,26 +852,32 @@ $conn->close();
                     </form>
                 </div>
                 <!-- Step 3: New Password -->
-                <div id="stepNewPass" style="display: none;">
-                    <p class="modal-description">Create a new password for your account.</p>
-                    <form onsubmit="handleResetPassword(event)">
-                        <div class="modal-input-group">
-                            <label class="modal-input-label">New Password</label>
-                            <div class="modal-input-wrapper">
-                                <img src="https://cdn-icons-png.flaticon.com/128/345/345535.png" alt="" class="modal-input-icon">
-                                <input type="password" id="newPassword" class="modal-input with-icon" placeholder="Enter new password" required>
-                            </div>
-                        </div>
-                        <div class="modal-input-group">
-                            <label class="modal-input-label">Confirm New Password</label>
-                            <div class="modal-input-wrapper">
-                                <img src="https://cdn-icons-png.flaticon.com/128/345/345535.png" alt="" class="modal-input-icon">
-                                <input type="password" id="confirmPassword" class="modal-input with-icon" placeholder="Confirm new password" required>
-                            </div>
-                        </div>
-                        <button type="submit" class="modal-btn">Reset Password</button>
-                    </form>
-                </div>
+<div id="stepNewPass" style="display: none;">
+    <p class="modal-description">Create a new password for your account.</p>
+    <form onsubmit="handleResetPassword(event)">
+        <div class="modal-input-group">
+            <label class="modal-input-label">New Password</label>
+            <div class="modal-input-wrapper">
+                <img src="https://cdn-icons-png.flaticon.com/128/345/345535.png" alt="" class="modal-input-icon">
+                <input type="password" id="newPassword" class="modal-input with-icon" placeholder="Enter new password" required style="padding-right: 48px;">
+                <button type="button" class="modal-eye-toggle" onclick="toggleModalPassword('newPassword', 'newPasswordEye')">
+                    <img id="newPasswordEye" src="https://cdn-icons-png.flaticon.com/128/2767/2767146.png" alt="toggle">
+                </button>
+            </div>
+        </div>
+        <div class="modal-input-group">
+            <label class="modal-input-label">Confirm New Password</label>
+            <div class="modal-input-wrapper">
+                <img src="https://cdn-icons-png.flaticon.com/128/345/345535.png" alt="" class="modal-input-icon">
+                <input type="password" id="confirmPassword" class="modal-input with-icon" placeholder="Confirm new password" required style="padding-right: 48px;">
+                <button type="button" class="modal-eye-toggle" onclick="toggleModalPassword('confirmPassword', 'confirmPasswordEye')">
+                    <img id="confirmPasswordEye" src="https://cdn-icons-png.flaticon.com/128/2767/2767146.png" alt="toggle">
+                </button>
+            </div>
+        </div>
+        <button type="submit" class="modal-btn">Reset Password</button>
+    </form>
+</div>
             </div>
         </div>
     </div>
@@ -925,6 +954,21 @@ $conn->close();
 function togglePassword() {
     const input = document.getElementById('signInPassword');
     const icon = document.getElementById('eyeIcon');
+    const openIcon = 'https://cdn-icons-png.flaticon.com/128/709/709612.png';
+    const closedIcon = 'https://cdn-icons-png.flaticon.com/128/2767/2767146.png';
+    
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.src = openIcon;
+    } else {
+        input.type = 'password';
+        icon.src = closedIcon;
+    }
+}
+
+function toggleModalPassword(inputId, iconId) {
+    const input = document.getElementById(inputId);
+    const icon = document.getElementById(iconId);
     const openIcon = 'https://cdn-icons-png.flaticon.com/128/709/709612.png';
     const closedIcon = 'https://cdn-icons-png.flaticon.com/128/2767/2767146.png';
     
