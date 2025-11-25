@@ -43,8 +43,11 @@ if (!$user) {
 // Check if user is admin
 $is_admin = ($user['usertype'] === 'admin');
 
-// Get join date (use created_at if available, otherwise use current date)
+// Get join date
 $join_date = isset($user['created_at']) ? date('F j, Y', strtotime($user['created_at'])) : date('F j, Y');
+
+// Get profile picture
+$profile_picture = !empty($user['profile_picture']) ? $user['profile_picture'] : null;
 
 $stmt->close();
 $conn->close();
@@ -155,6 +158,12 @@ $conn->close();
             text-align: center;
         }
 
+        .profile-picture-container {
+            position: relative;
+            display: inline-block;
+            margin: 0 auto 1rem;
+        }
+
         .profile-avatar {
             background: white;
             border-radius: 50%;
@@ -163,13 +172,54 @@ $conn->close();
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 1rem;
+            margin: 0 auto;
             box-shadow: 0 10px 15px rgba(0,0,0,0.1);
         }
 
         .profile-avatar i {
             font-size: 4rem;
             color: #16a34a;
+        }
+
+        .profile-picture-img {
+            width: 8rem;
+            height: 8rem;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid white;
+            box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+        }
+
+        .change-picture-btn {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background: #16a34a;
+            color: white;
+            border: none;
+            padding: 8px;
+            border-radius: 50%;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            transition: background 0.3s;
+        }
+
+        .change-picture-btn:hover {
+            background: #15803d;
+        }
+
+        #profilePictureInput {
+            display: none;
+        }
+
+        #profilePictureMessage {
+            margin-top: 0.75rem;
+            margin-bottom: 1rem;
         }
 
         .profile-header h1 {
@@ -245,6 +295,92 @@ $conn->close();
 
         .info-card p.capitalize {
             text-transform: capitalize;
+        }
+
+        /* Editable Field Styles */
+        .editable-field {
+            position: relative;
+        }
+
+        .edit-button {
+            background: #16a34a;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            margin-left: 0.5rem;
+            transition: background 0.3s;
+        }
+
+        .edit-button:hover {
+            background: #15803d;
+        }
+
+        .edit-input {
+            width: 100%;
+            padding: 8px;
+            border: 2px solid #16a34a;
+            border-radius: 4px;
+            font-size: 0.9375rem;
+            margin-top: 0.5rem;
+        }
+
+        .edit-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .save-button {
+            background: #16a34a;
+            color: white;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            transition: background 0.3s;
+        }
+
+        .save-button:hover {
+            background: #15803d;
+        }
+
+        .cancel-button {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            transition: background 0.3s;
+        }
+
+        .cancel-button:hover {
+            background: #b91c1c;
+        }
+
+        .success-message {
+            background: #d1fae5;
+            color: #065f46;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 0.5rem;
+            font-size: 0.875rem;
+            text-align: center;
+        }
+
+        .error-message {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 0.5rem;
+            font-size: 0.875rem;
+            text-align: center;
         }
 
         /* Valid ID Image */
@@ -496,17 +632,51 @@ $conn->close();
                 padding: 1.5rem 1rem;
             }
         }
+        .back-btn {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #f3f4f6;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.3s;
+        margin-right: 12px;
+    }
+
+    .back-btn:hover {
+        background: #e5e7eb;
+    }
+
+    .back-btn i {
+        color: #374151;
+    }
+
+    /* Update header-left to include the back button */
+    .header-left {
+        display: flex;
+        align-items: center;
+        gap: 0; /* Remove gap since we're using margin-right on back-btn */
+    }
     </style>
 </head>
 <body>
-    <!-- Header -->
     <header>
-        <a href="homepage.php" class="logo-section">
-            <img 
-                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRTDCuh4kIpAtR-QmjA1kTjE_8-HSd8LSt3Gw&s" 
-                alt="Logo"
-                class="logo-img"
-            />
+    <a href="homepage.php" class="logo-section">
+        <button 
+            class="back-btn" 
+            onclick="event.preventDefault(); window.location.href='homepage.php'"
+            title="Go back"
+        >
+            <i class="fas fa-arrow-left"></i>
+        </button>
+        <img 
+            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRTDCuh4kIpAtR-QmjA1kTjE_8-HSd8LSt3Gw&s" 
+            alt="Logo"
+            class="logo-img"
+        />
             <div class="logo-text">
                 <div>Barangay 170</div>
                 <div>Community Portal</div>
@@ -523,10 +693,25 @@ $conn->close();
         <div class="profile-card">
             <!-- Profile Header -->
             <div class="profile-header">
-                <div class="profile-avatar">
-                    <i class="fas fa-user-circle"></i>
+                <div class="profile-picture-container">
+                    <?php if ($profile_picture && file_exists($profile_picture)): ?>
+                        <img src="<?php echo htmlspecialchars($profile_picture); ?>" 
+                             alt="Profile Picture" 
+                             class="profile-picture-img"
+                             id="profilePicturePreview">
+                    <?php else: ?>
+                        <div class="profile-avatar">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                    <?php endif; ?>
+                    <button type="button" class="change-picture-btn" onclick="document.getElementById('profilePictureInput').click()">
+                        <i class="fas fa-camera"></i>
+                    </button>
+                    <input type="file" id="profilePictureInput" accept="image/*" onchange="uploadProfilePicture(this)">
                 </div>
-                <h1><?php echo htmlspecialchars($user['email']); ?></h1>
+                <div id="profilePictureMessage"></div>
+                
+                <h1><?php echo htmlspecialchars($user['first_name'] . ' ' . $user['middle_name'] . ' ' . $user['last_name']); ?></h1>
                 <div class="profile-email">
                     <i class="fas fa-envelope"></i>
                     <span><?php echo htmlspecialchars($user['email']); ?></span>
@@ -538,27 +723,36 @@ $conn->close();
                 <h2>Profile Information</h2>
                 
                 <div class="info-grid">
-
-                    <!-- Email -->
-                    <div class="info-card">
+                    <!-- Contact Number -->
+                    <div class="info-card editable-field">
                         <div class="info-card-header">
                             <div class="info-icon">
-                                <i class="fas fa-envelope"></i>
-                            </div>
-                            <h3>Full Name</h3>
-                        </div>
-                        <p><?php echo htmlspecialchars($user['first_name']); ?><?php echo " "?><?php echo htmlspecialchars($user['middle_name']); ?><?php echo " "?><?php echo htmlspecialchars($user['last_name']); ?></p>
-                    </div>
-
-                    <!-- Email -->
-                    <div class="info-card">
-                        <div class="info-card-header">
-                            <div class="info-icon">
-                                <i class="fas fa-envelope"></i>
+                                <i class="fas fa-phone"></i>
                             </div>
                             <h3>Contact Number</h3>
                         </div>
-                        <p><?php echo htmlspecialchars($user['contact_number']); ?></p>
+                        <p id="contactDisplay">
+                            <?php echo htmlspecialchars($user['contact_number']); ?>
+                            <button type="button" class="edit-button" onclick="editContact()">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                        </p>
+                        <div id="contactEdit" style="display: none;">
+                            <input type="text" 
+                                   id="contactInput" 
+                                   class="edit-input" 
+                                   value="<?php echo htmlspecialchars($user['contact_number']); ?>"
+                                   placeholder="Enter contact number">
+                            <div class="edit-actions">
+                                <button type="button" class="save-button" onclick="saveContact()">
+                                    <i class="fas fa-check"></i> Save
+                                </button>
+                                <button type="button" class="cancel-button" onclick="cancelContactEdit()">
+                                    <i class="fas fa-times"></i> Cancel
+                                </button>
+                            </div>
+                        </div>
+                        <div id="contactMessage"></div>
                     </div>
 
                     <!-- Account Type -->
@@ -609,7 +803,7 @@ $conn->close();
                     </div>
                     <?php endif; ?>
 
-                    <?php if (isset($user['valid_id']) && !empty($user['valid_id'])): ?>
+                    <?php if (isset($user['file_path']) && !empty($user['file_path'])): ?>
                     <!-- Valid ID Document -->
                     <div class="info-card" style="grid-column: 1 / -1;">
                         <div class="info-card-header">
@@ -620,7 +814,7 @@ $conn->close();
                         </div>
                         <div class="id-image">
                             <img 
-                                src="<?php echo htmlspecialchars($user['valid_id']); ?>" 
+                                src="<?php echo htmlspecialchars($user['file_path']); ?>" 
                                 alt="Valid ID"
                             />
                             <p>ID verified during registration</p>
@@ -748,5 +942,135 @@ $conn->close();
             </div>
         </div>
     </footer>
+    <script>
+        // Contact Number Editing
+function editContact() {
+    document.getElementById('contactDisplay').style.display = 'none';
+    document.getElementById('contactEdit').style.display = 'block';
+    document.getElementById('contactInput').focus();
+}
+
+function cancelContactEdit() {
+    document.getElementById('contactDisplay').style.display = 'block';
+    document.getElementById('contactEdit').style.display = 'none';
+    document.getElementById('contactMessage').innerHTML = '';
+}
+
+async function saveContact() {
+    const contactInput = document.getElementById('contactInput');
+    const contactNumber = contactInput.value.trim();
+    
+    if (!contactNumber) {
+        showMessage('contactMessage', 'Contact number cannot be empty', 'error');
+        return;
+    }
+    
+    const formData = new FormData();
+    formData.append('update_contact', '1');
+    formData.append('contact_number', contactNumber);
+    
+    try {
+        const response = await fetch('api_update_profile.php', {
+            method: 'POST',
+            body: formData
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            // Update display
+            document.getElementById('contactDisplay').innerHTML = 
+                contactNumber + 
+                ' <button type="button" class="edit-button" onclick="editContact()"><i class="fas fa-edit"></i> Edit</button>';
+            
+            cancelContactEdit();
+            showMessage('contactMessage', result.message, 'success');
+            
+            // Clear success message after 3 seconds
+            setTimeout(() => {
+                document.getElementById('contactMessage').innerHTML = '';
+            }, 3000);
+        } else {
+            showMessage('contactMessage', result.error, 'error');
+        }
+    } catch (error) {
+        showMessage('contactMessage', 'An error occurred. Please try again.', 'error');
+    }
+}
+
+// Profile Picture Upload
+async function uploadProfilePicture(input) {
+    if (!input.files || !input.files[0]) return;
+    
+    const file = input.files[0];
+    
+    // Validate file type
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+    if (!allowedTypes.includes(file.type)) {
+        showMessage('profilePictureMessage', 'Invalid file type. Only JPG, PNG, and GIF allowed', 'error');
+        return;
+    }
+    
+    // Validate file size (5MB)
+    if (file.size > 5 * 1024 * 1024) {
+        showMessage('profilePictureMessage', 'File size too large. Maximum 5MB allowed', 'error');
+        return;
+    }
+    
+    const formData = new FormData();
+    formData.append('profile_picture', file);
+    
+    try {
+        showMessage('profilePictureMessage', 'Uploading...', 'success');
+        
+        const response = await fetch('api_update_profile.php', {
+            method: 'POST',
+            body: formData
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            // Update preview
+            const preview = document.getElementById('profilePicturePreview');
+            if (preview) {
+                preview.src = result.filepath + '?' + new Date().getTime(); // Add timestamp to force reload
+            } else {
+                // If no preview exists, create one
+                const container = document.querySelector('.profile-picture-container');
+                const avatar = container.querySelector('.profile-avatar');
+                if (avatar) avatar.remove();
+                
+                const img = document.createElement('img');
+                img.src = result.filepath + '?' + new Date().getTime();
+                img.alt = 'Profile Picture';
+                img.className = 'profile-picture-img';
+                img.id = 'profilePicturePreview';
+                container.insertBefore(img, container.firstChild);
+            }
+            
+            showMessage('profilePictureMessage', result.message, 'success');
+            
+            // Clear success message after 3 seconds
+            setTimeout(() => {
+                document.getElementById('profilePictureMessage').innerHTML = '';
+            }, 3000);
+        } else {
+            showMessage('profilePictureMessage', result.error, 'error');
+        }
+    } catch (error) {
+        showMessage('profilePictureMessage', 'An error occurred. Please try again.', 'error');
+    }
+    
+    // Clear the input
+    input.value = '';
+}
+
+// Helper function to show messages
+function showMessage(elementId, message, type) {
+    const element = document.getElementById(elementId);
+    element.innerHTML = `<div class="${type}-message">${message}</div>`;
+}
+    </script>
 </body>
 </html>
